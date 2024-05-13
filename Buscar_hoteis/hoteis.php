@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $filtro = isset($_GET['filtro']) ? $_GET['filtro'] : null;
     $id = isset($_GET['id']) ? $_GET['id'] : null;
 
-    $sql = "SELECT id, nome , cidade , estado , complemento , informacao_hotel  FROM hotel ";
+    $sql = "SELECT id, nome, cidade, estado, complemento, informacao_hotel, image FROM reservahotel.hotel;";
 
     // Verifica qual parâmetro está presente e ajusta a condição WHERE
     if (!empty($filtro) && empty($id)) {
