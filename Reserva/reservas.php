@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $filtro = isset($_GET['filtro']) ? $_GET['filtro'] : null;
     $id = isset($_GET['id']) ? $_GET['id'] : null;
 
-    $sql = "SELECT id, nome_hospede, email, cpf, id_quarto, checkin, checkout  FROM reserva ";
+    $sql = "SELECT id, id_hotel ,tipo, andar , status , info_quarto  FROM quarto q";
 
     // Verifica qual parâmetro está presente e ajusta a condição WHERE
     if (!empty($filtro) && empty($id)) {
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $filtro = "%$filtro%";
         $stmt->bind_param("s", $filtro);
     } else if (empty($filtro) && !empty($id)) {
-        $sql .= " WHERE id = ?";
+        $sql .= " WHERE id_hotel = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $id); // Assumindo que o campo id é um número inteiro
     } else {
