@@ -1,77 +1,77 @@
 <?php
-// OBS: Api referente a conexão ao banco 
 // cabeçalhos CORS
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: *');
-header("Access-Control-Allow-Headers: X-Requested-With");
-// Permitir solicitações de qualquer origem
-header("Access-Control-Allow-Origin: *");
-// Outros cabeçalhos CORS necessários
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: X-Requested-With, Content-Type, Authorization");
+
+// Supress output buffering to prevent errors/warnings affecting the JSON response
+ob_start();
+
+// Função para retornar a resposta JSON e finalizar o script
+function send_json_response($data)
+{
+    ob_end_clean(); // Limpar buffer de saída
+    echo json_encode($data);
+    exit();
+}
+
 // Ler os dados de conexão do corpo da requisição
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-
-
     $filePath = '../Conexao/conexao.json';
-
     $config = json_decode(file_get_contents($filePath), true);
+
     // Estabelecer variaveis de conexao do banco
     $servername = $config['servername'];
     $username = $config['username'];
     $password = $config['password'];
     $dbname = $config['dbname'];
 
-    $conn  = new mysqli($servername, $username, $password, $dbname);
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        echo json_encode([
+        send_json_response([
             "success" => false,
             "message" => "Erro ao conectar ao banco de dados",
             "error" => $conn->connect_error
         ]);
     } else {
-        // echo json_encode([
-        //     "success" => true,
-        //     "message" => "Connection already established",
-        //     "s" => $conn
-        // ]);
-        die ('Conexao bem sucedida ' );
+        send_json_response([
+            "success" => true,
+            "message" => "Connection already established",
+            "s" => $conn
+        ]);
     }
-   
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dataConnection = json_decode(file_get_contents('php://input'), true);
+
     // Caminho do arquivo JSON de conexão
     $filePath = "./conexao.json";
 
     // Salvar os dados de conexão no arquivo JSON
     file_put_contents($filePath, json_encode($dataConnection));
-    //  data variable to connection
-    $config = json_decode(file_get_contents($filePath), true);
-    // Estabelecer variaveis de conexao do banco
-    $servername =   $config['servername'];
-    $username =     $config['username'];
-    $password =     $config['password'];
-    $dbname =       $config['dbname'];
 
-    $conn  = new mysqli($servername, $username, $password, $dbname);
+    $config = json_decode(file_get_contents($filePath), true);
+
+    // Estabelecer variaveis de conexao do banco
+    $servername = $config['servername'];
+    $username = $config['username'];
+    $password = $config['password'];
+    $dbname = $config['dbname'];
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        echo json_encode([
+        send_json_response([
             "success" => false,
             "message" => "Erro ao conectar ao banco de dados",
             "error" => $conn->connect_error
         ]);
     } else {
-        echo json_encode(["Sucess" => true, "Message" => "successfully connected "]);
+        send_json_response(["success" => true, "message" => "successfully connected"]);
     }
 } else {
-    echo json_encode([
-        "Erro" => "Erro when manipulating data"
+    send_json_response([
+        "error" => "Erro when manipulating data"
     ]);
-}
-
-function conect($config)
-{
 }
